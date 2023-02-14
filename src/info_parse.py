@@ -36,11 +36,13 @@ def check_var(var, df):
         info = df[df['transcript'] == var.transcript]
         if info.shape[0] == 1:
             for index, row in info.iterrows():
-                var_list.append(copy.copy(var.update(row)))
+                var.update(row)
+                var_list.append(copy.copy(var))
     elif var.gene and var.gene != '.':
         info = df[df['symbol'] == var.gene]
         for index, row in info.iterrows():
-            var_list.append(copy.copy(var.update(row)))
+            var.update(row)
+            var_list.append(copy.copy(var))
     else:
         var_list = 0
     return var_list
@@ -64,7 +66,8 @@ def var_parse(file, output, db_file):
         if var.cdna and var.cdna != '.':
             info_list = parse_cdna(var.cdna)
             _var = parse_cdna_var(var, info_list)
-            paesed_var_list.append(copy.copy(_var))
+            if _var:
+                paesed_var_list.append(copy.copy(_var))
         else:
             # 先空着
             pass

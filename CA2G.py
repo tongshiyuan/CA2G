@@ -33,13 +33,13 @@ def read_arg():
     return args
 
 
-def check_par(infile, ref, output):
+def check_par(infile, output):
     if not os.path.isfile(infile):
         log('ERROR', f'Can not find <{infile}>.')
     if os.path.isfile(output):
         log('ERROR', f'File <{output}> existed.')
-    if ref not in ['hg19', 'hg38']:
-        log('ERROR', f'Can not identify <{ref}>.')
+    # if ref not in ['hg19', 'hg38']:
+    #     log('ERROR', f'Can not identify <{ref}>.')
 
 
 def get_output(arg):
@@ -71,7 +71,7 @@ def main():
     gene_db = get_db_file(arg, sp)
     infile = arg.file
     output = get_output(arg)
-    check_par(infile, gene_db, output)
+    check_par(infile, output)
     # tmp_dir = get_tmp(arg.tmp)
     # try:
     var_parse(infile, output, gene_db)

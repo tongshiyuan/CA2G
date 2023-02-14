@@ -15,23 +15,23 @@ def parse_cdna(cdna):
         ref = cdna.split('>')[0][-1]
         alt = cdna.split('>')[1]
         if '+' in cdna:
-            _exon = cdna.split('>')[:-3].split('+')[0]
-            _intr = cdna.split('>')[:-3].split('+')[1]
+            _exon = cdna[:-3].split('+')[0]
+            _intr = cdna[:-3].split('+')[1]
             stand = '+'
         elif '-' in cdna:
-            _exon = cdna.split('>')[:-3].split('-')[0]
+            _exon = cdna[:-3].split('-')[0]
             if not _exon:
                 _exon = 0
-            _intr = cdna.split('>')[:-3].split('-')[1]
+            _intr = cdna[:-3].split('-')[1]
             stand = '-'
         elif '*' in cdna:
             _exon = '*'
-            _intr = cdna.split('>')[:-3].split('*')[1]
+            _intr = cdna[:-3].split('*')[1]
             stand = '*'
         else:
-            _exon = cdna.split('>')[:-3]
+            _exon = cdna[:-3]
             _intr, stand = 0, ''
-        return _exon, _intr, stand, ref, alt
+        return int(_exon), int(_intr), stand, ref, alt
     else:
         # 先空着
         pass
@@ -60,28 +60,33 @@ def parse_cdna_var(var, info_list):
             codon_len[idx] = eel[idx] - esl[idx] + 1
     else:
         codon_len[tran_strat_site] = ted - tss + 1
+    if info_list[0] > sum(codon_len):
+        return 0
     std = info_list[2]
-    if var.stand == '+':
+    if var.strand == '+':
         if not std:
+            tmp_v = info_list[0]
             for idx, v in enumerate(codon_len):
-                tmp_v = info_list[0] - v
+                tmp_v = tmp_v - v
                 if tmp_v <= 0:
                     pos = eel[idx] + tmp_v
+                    var.position = pos
                     break
         else:
             # 先空着
             pass
     else:
         if not std:
+            tmp_v = info_list[0]
             for idx, v in enumerate(codon_len[::-1]):
-                tmp_v = info_list[0] - v
+                tmp_v = tmp_v - v
                 if tmp_v <= 0:
-                    pos = esl[exon_num - idx] - tmp_v
+                    pos = esl[exon_num - 1 - idx] - tmp_v
+                    var.position = pos
                     break
         else:
             # 先空着
             pass
-    var.position = pos
     var.exon_num = idx
     var.ref = info_list[3]
     var.alt = info_list[4]
