@@ -1,5 +1,5 @@
 import re
-
+from src.basic_fun import complement
 
 def parse_cdna(cdna):
     '''
@@ -71,6 +71,9 @@ def parse_cdna_var(var, info_list):
                 if tmp_v <= 0:
                     pos = eel[idx] + tmp_v
                     var.position = pos
+                    ref = info_list[3]
+                    alt = info_list[4]
+                    exon_num = idx + 1
                     break
         else:
             # 先空着
@@ -83,11 +86,14 @@ def parse_cdna_var(var, info_list):
                 if tmp_v <= 0:
                     pos = esl[exon_num - 1 - idx] - tmp_v
                     var.position = pos
+                    ref = complement(info_list[3])
+                    alt = complement(info_list[4])
+                    exon_num = idx + 1
                     break
         else:
             # 先空着
             pass
-    var.exon_num = idx
-    var.ref = info_list[3]
-    var.alt = info_list[4]
+    var.exon_num = exon_num
+    var.ref = ref
+    var.alt = alt
     return var
