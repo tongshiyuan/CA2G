@@ -42,7 +42,7 @@ def parse_cdna_var(var, info_list):
     esl = [int(i) for i in var.ref_info[9].rstrip(',').split(',')]  # exon start list
     eel = [int(i) for i in var.ref_info[10].rstrip(',').split(',')]  # exon end list
     exon_len = [int(j) - int(i) + 1 for i, j in zip(esl, eel)]
-    exon_num = len(exon_len)
+    exon_nums = len(exon_len)
     tss = int(var.ref_info[6])  # Translation start site
     ted = int(var.ref_info[7])  # Translation end site
     # 判断翻译起始位点的位置
@@ -52,14 +52,14 @@ def parse_cdna_var(var, info_list):
     el1 = [int(ted >= i) for i in esl]
     el2 = [int(ted <= i) for i in eel]
     tran_end_site = [i - j for i, j in zip(el1, el2)].index(0)
-    codon_len = [0] * exon_num
+    codon_len = [0] * exon_nums
     if tran_end_site > tran_strat_site:
-        codon_len[tran_strat_site] = eel[tran_strat_site] - tss + 1
-        codon_len[tran_end_site] = ted - esl[tran_end_site] + 1
+        codon_len[tran_strat_site] = eel[tran_strat_site] - tss
+        codon_len[tran_end_site] = ted - esl[tran_end_site]
         for idx in range(tran_strat_site + 1, tran_end_site):
-            codon_len[idx] = eel[idx] - esl[idx] + 1
+            codon_len[idx] = eel[idx] - esl[idx]
     else:
-        codon_len[tran_strat_site] = ted - tss + 1
+        codon_len[tran_strat_site] = ted - tss
     if info_list[0] > sum(codon_len):
         return 0
     std = info_list[2]
@@ -73,7 +73,7 @@ def parse_cdna_var(var, info_list):
                     var.position = pos
                     ref = info_list[3]
                     alt = info_list[4]
-                    exon_num = idx + 1
+                    exons = idx + 1
                     break
         else:
             # 先空着
@@ -84,7 +84,7 @@ def parse_cdna_var(var, info_list):
             for idx, v in enumerate(codon_len[::-1]):
                 tmp_v = tmp_v - v
                 if tmp_v <= 0:
-                    pos = esl[exon_num - 1 - idx] - tmp_v
+                    pos = esl[exon_nums - 1 - idx] - tmp_v + 1
                     var.position = pos
                     ref = complement(info_list[3])
                     alt = complement(info_list[4])
@@ -93,7 +93,7 @@ def parse_cdna_var(var, info_list):
         else:
             # 先空着
             pass
-    var.exon_num = exon_num
+    var.exon_num = exons
     var.ref = ref
     var.alt = alt
     return var
