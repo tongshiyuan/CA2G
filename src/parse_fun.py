@@ -69,7 +69,10 @@ def parse_cdna_var(var, info_list):
             for idx, v in enumerate(codon_len):
                 tmp_v = tmp_v - v
                 if tmp_v <= 0:
-                    pos = eel[idx] + tmp_v
+                    if idx == tran_end_site:
+                        pos = ted + tmp_v
+                    else:
+                        pos = eel[idx] + tmp_v
                     var.position = pos
                     ref = info_list[3]
                     alt = info_list[4]
@@ -84,7 +87,11 @@ def parse_cdna_var(var, info_list):
             for idx, v in enumerate(codon_len[::-1]):
                 tmp_v = tmp_v - v
                 if tmp_v <= 0:
-                    pos = esl[exon_nums - 1 - idx] - tmp_v + 1
+                    if exon_nums - 1 - idx == tran_strat_site:
+                        pos = tss - tmp_v + 1
+                    else:
+                        pos = esl[exon_nums - 1 - idx] - tmp_v + 1
+                    # pos = esl[exon_nums - 1 - idx] - tmp_v + 1
                     var.position = pos
                     ref = complement(info_list[3])
                     alt = complement(info_list[4])
