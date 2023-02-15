@@ -88,7 +88,7 @@ def parse_cdna_var(var, info_list):
                     var.position = pos
                     ref = complement(info_list[3])
                     alt = complement(info_list[4])
-                    exon_num = idx + 1
+                    exons = idx + 1
                     break
         else:
             # 先空着
