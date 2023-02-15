@@ -42,6 +42,7 @@ def check_var(var, df):
         info = df[df['symbol'] == var.gene]
         for index, row in info.iterrows():
             var.update(row)
+            var.transcript = row['transcript']
             var_list.append(copy.copy(var))
     else:
         var_list = 0
@@ -73,9 +74,9 @@ def var_parse(file, output, db_file):
             pass
     if len(paesed_var_list) > 0:
         fo = open(output, 'w')
-        fo.write('chr\tposition\tref\talt\tgene\ttranscript\tcDNA\tamino_acid_position\texon_num\n')
+        fo.write('chr\tposition\tref\talt\tgene\ttranscript\tstrand\tcDNA\tamino_acid_position\texon_num\n')
         for var in paesed_var_list:
             fo.write('\t'.join([str(i) for i in
-                                [var.chrom, var.position, var.ref, var.alt, var.gene, var.transcript, var.cdna, var.aa,
-                                 var.exon_num]]) + '\n')
+                                [var.chrom, var.position, var.ref, var.alt, var.gene, var.transcript, var.strand,
+                                 var.cdna, var.aa, var.exon_num]]) + '\n')
         fo.close()
